@@ -63,6 +63,8 @@ RUN apt-get --no-install-recommends -y install \
     libltdl-dev \
     gsl-bin \
     libgsl-dev \
+    vim \
+    python-tk \
     libgsl2 \
     openssh-server \
     docker.io \
@@ -81,6 +83,7 @@ COPY pip /usr/bin/pip
 RUN pip install setuptools -U && \
     pip install numpy -U && \
     pip install scipy -U && \
+    pip install uncertainties && \
     pip install matplotlib -U
 
 # PGPLOT
