@@ -84,6 +84,9 @@ RUN pip install setuptools -U && \
     pip install numpy -U && \
     pip install scipy -U && \
     pip install uncertainties && \
+    pip install astropy && \
+    pip install jupyter && \
+    pip install mpld3  && \
     pip install matplotlib -U
 
 # PGPLOT
