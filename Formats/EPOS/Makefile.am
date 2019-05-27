@@ -1,9 +1,10 @@
 
 noinst_LTLIBRARIES = libepos.la
 
-nobase_include_HEADERS = Pulsar/EPOSArchive.h
+nobase_include_HEADERS = Pulsar/EPOSArchive_new.h
 
-libepos_la_SOURCES = EPOSArchive.C eposio.c eposio.h
+#libepos_la_SOURCES = EPOSArchive.C eposio.c eposio.h
+libepos_la_SOURCES = EPOSArchive_new.C eposio_new.c eposio_new.h
 
 #############################################################################
 

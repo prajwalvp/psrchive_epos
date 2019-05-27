@@ -203,7 +203,7 @@ void Pulsar::EPOSArchive::load_header (const char* filename)
 
   // Next, set the class attributes using data from the file.
   // Number of polarizations, channels, and subintegrations in file.
-  set_npol(1);
+  set_npol(4);
   set_nchan(1);
 
   int nsub = get_nsubints(filename);
@@ -214,7 +214,7 @@ void Pulsar::EPOSArchive::load_header (const char* filename)
   set_nbin(1024);
 
   // Polarization state, see Util/genutil/Types.h for allowed values
-  set_state(Signal::Intensity);
+  set_state(Signal::Coherence);
 
   // Data scale, values also defined in Types.h
   set_scale(Signal::FluxDensity);
@@ -230,10 +230,10 @@ void Pulsar::EPOSArchive::load_header (const char* filename)
   set_type(Signal::Pulsar);
 
   // Total bandwidth, MHz. Negative value denotes reversed band.
-  set_bandwidth(140.0);
+  set_bandwidth(40.0);
 
   // Center frequency, MHz.  Note correct spelling of "center" ;)
-  set_centre_frequency(1410.0);
+  set_centre_frequency(1390.0);
 
   // Dispersion measure, pc/cm^3.
   set_dispersion_measure(71.025);
@@ -277,7 +277,10 @@ Pulsar::EPOSArchive::load_Integration (const char* filename, unsigned subint)
   if (Profile::no_amps) return integration;
 
   // Load the actual data for each pol, channel from the file.
-  float *data = new float[nbin]; // Temporary storage space
+  float *data0 = new float[nbin]; // Temporary storage space
+  float *data1 = new float[nbin]; // Temporary storage space
+  float *data2 = new float[nbin]; // Temporary storage space
+  float *data3 = new float[nbin]; // Temporary storage space
 
   unsigned i;
 
@@ -285,9 +288,10 @@ Pulsar::EPOSArchive::load_Integration (const char* filename, unsigned subint)
 	throw Error (InvalidState, "Pulsar::EPOSArchive::load_Integration",
                  "cannot get data from File %s for subint %d\n", filename, subint);
 
-  //for ( i=0;i<nbin;i++) data[i] = (float)eposdata.data0[i] + (float)eposdata.data1[i];
-  
-  for ( i=0;i<nbin;i++) data[i] = (float)eposdata.data0[i] + (float)eposdata.data1[i];
+  for ( i=0;i<nbin;i++) data0[i] = (float)eposdata.data0[i];
+  for ( i=0;i<nbin;i++) data1[i] = (float)eposdata.data1[i];
+  for ( i=0;i<nbin;i++) data2[i] = (float)eposdata.data2[i];
+  for ( i=0;i<nbin;i++) data3[i] = (float)eposdata.data3[i];
 
   // find average and remove baseline
 
@@ -300,15 +304,19 @@ Pulsar::EPOSArchive::load_Integration (const char* filename, unsigned subint)
   //data[nbin-2] =  data[nbin-4] ;
 
   for (unsigned ichan=0; ichan<nchan; ichan++)
-    integration->set_centre_frequency(ichan, 1410.0);
+    integration->set_centre_frequency(ichan, 1390.0);
 
-  for (unsigned ipol=0; ipol<npol; ipol++) {
-    for (unsigned ichan=0; ichan<nchan; ichan++) {
+  //for (unsigned ipol=0; ipol<npol; ipol++) {
+  //for (unsigned ichan=0; ichan<nchan; ichan++) {
       // Load data for ipol, ichan into data array here.
       // Put data in integration structure:
-      integration->get_Profile(ipol,ichan)->set_amps(data);
-    }
-  }
+  integration->get_Profile(0,ichan)->set_amps(data0);
+  integration->get_Profile(1,ichan)->set_amps(data1);
+  integration->get_Profile(2,ichan)->set_amps(data2);
+  integration->get_Profile(3,ichan)->set_amps(data3);
+   
+    //}
+ // }
 
   // Unallocate temp space
   delete [] data;
